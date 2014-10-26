@@ -13,48 +13,14 @@
 #include <vector>
 
 template <class container, class func>
-auto map(const container& c, func&& f) -> std::list<decltype(f(*(c.begin())))>
+inline auto map(const container& c, func&& f) -> std::list<decltype(f(*(c.begin())))>
 {
     typedef decltype(*(c.begin())) input_type;
     typedef decltype(f(*(c.begin()))) output_type;
     
     std::list<output_type> out;
     
-    std::cout << "A";
-    
-    for(auto& x : c)
-    {
-        std::cout << "B";
-        out.push_back(f(x));
-        std::cout << "C";
-    }
-    
-    return out;
-}
-
-class test_class
-{
-public:
-    test_class()
-    {
-        std::cout << "Normal constructor" << std::endl;
-    }
-    test_class(const test_class& x)
-    {
-        std::cout << "Copy constructor" << std::endl;
-    }
-    test_class(test_class&& x)
-    {
-        std::cout << "Move constructor" << std::endl;
-    }
-};
-
-template<class func>
-inline std::list<int> maptest(std::vector<test_class> c, func f)
-{
-    std::list<int> out;
-    
-    for(test_class x : c)
+    for(const auto& x : c)
     {
         out.push_back(f(x));
     }
@@ -62,43 +28,18 @@ inline std::list<int> maptest(std::vector<test_class> c, func f)
     return out;
 }
 
-/*
-template <typename T, class func>
-auto map(std::initializer_list<T> c, func f) -> std::list<decltype(f(*(c.begin())))>
+int main(int argc, const char * argv[])
 {
-    typedef decltype(f(*(c.begin()))) output_type;
-    std::list<output_type> out;
-    std::cout << "Uh..." << std::endl;
-    return out;
-}
-*/
-
-int main(int argc, const char * argv[]) {
-    
     auto nums = {1, 2, 3};
-    std::list<test_class> v(2);
-    
-    std::cout << "Boom" << std::endl;
-    
-    auto testfunc = [](const test_class& i) { return 0; };
-    testfunc(*(v.begin()));
-    
-    auto test = map(v, testfunc);
     
     auto list = map(nums, [](int i){return i + 2;});
-    auto list2 = map<std::initializer_list<int>>({4,5,6}, [](int i){return i + 2;});
     
-    for(auto i : list)
-    {
-        std::cout << i << std::endl;
-    }
+    // Doesn't compile, can't infer type of intializer list, have to specify it:
+    //auto list2 = map({4,5,6}, [](int i){return i + 2;});
+    auto list3 = map<std::initializer_list<int>>({4,5,6}, [](int i){return i + 2;});
     
-    for(auto i : list2)
-    {
-        std::cout << i << std::endl;
-    }
-    
-    std::cout << [](int i){return i;}(-2) << std::endl;
+    // If passing by reference into lambda, has to be a const reference
+    auto list4 = map(nums, [](const int& i){return i + 2;});
     
     return 0;
 }
