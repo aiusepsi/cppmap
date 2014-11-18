@@ -13,14 +13,14 @@
 #include <vector>
 
 template <class container, class func>
-inline auto map(const container& c, func&& f) -> std::list<decltype(f(*(c.begin())))>
+inline auto map(const container& c, func&& f) -> std::list<decltype(f(*( std::begin(c) )))>
 {
-    typedef decltype(*(c.begin())) input_type;
-    typedef decltype(f(*(c.begin()))) output_type;
+    typedef decltype(*(std::begin(c))) input_type;
+    typedef decltype(f(*(std::begin(c)))) output_type;
     
     std::list<output_type> out;
     
-    for(const auto& x : c)
+    for(const input_type& x : c)
     {
         out.push_back(f(x));
     }
@@ -36,10 +36,14 @@ int main(int argc, const char * argv[])
     
     // Doesn't compile, can't infer type of intializer list, have to specify it:
     //auto list2 = map({4,5,6}, [](int i){return i + 2;});
-    auto list3 = map<std::initializer_list<int>>({4,5,6}, [](int i){return i + 2;});
+    auto list3 = map<std::vector<int>>({4,5,6}, [](int i){return i + 2;});
     
     // If passing by reference into lambda, has to be a const reference
     auto list4 = map(nums, [](const int& i){return i + 2;});
+	
+	// Can even use arrays!
+	int testarray[3];
+	auto list5 = map(testarray, [](int i){return i + 2;});
     
     return 0;
 }
