@@ -22,8 +22,9 @@ pipeline {
     }
     stage('TestStage2') {
       steps {
-        node(label: 'Blah') {
+        node(label: 'macOS') {
           echo 'Boo!'
+          sh 'uname'
         }
         
       }
