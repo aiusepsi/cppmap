@@ -1,5 +1,5 @@
 pipeline {
-  agent any
+  agent none
   stages {
     stage('TestStage') {
       steps {
@@ -26,7 +26,7 @@ pipeline {
             
             
           },
-          "": {
+          "error": {
             node(label: 'any') {
               echo 'sad'
             }
