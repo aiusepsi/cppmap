@@ -1,10 +1,5 @@
 pipeline {
-  agent {
-    docker {
-      image 'ubuntu'
-    }
-    
-  }
+  agent any
   stages {
     stage('TestStage') {
       steps {
@@ -22,11 +17,23 @@ pipeline {
     }
     stage('TestStage2') {
       steps {
-        node(label: 'macos') {
-          echo 'Boo!'
-          sh 'uname'
-        }
-        
+        parallel(
+          "TestStage2": {
+            node(label: 'macos') {
+              echo 'Boo!'
+              sh 'uname'
+            }
+            
+            
+          },
+          "": {
+            node(label: 'any') {
+              echo 'sad'
+            }
+            
+            
+          }
+        )
       }
     }
   }
