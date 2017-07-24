@@ -11,7 +11,6 @@ pipeline {
         parallel(
           "TestStage": {
             echo 'Hello, world!'
-            warnings()
             
           },
           "TeststageA": {
